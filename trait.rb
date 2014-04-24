@@ -14,10 +14,6 @@ class Trait
 
   end
 
-  def self.name parametro
-
-  end
-
   def initialize (nombre, metodosHash)
     self.nombre  = nombre
     self.metodos = metodosHash
