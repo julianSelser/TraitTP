@@ -36,16 +36,25 @@ Trait.define do
 
 end
 
+#otro trait con un metodo que devuelve un string, va a jugar con el trait de arriba
+Trait.define do
+  name :TraitQueLlenaRequerimiento
+
+  method :requerimiento do
+    "requerimiento cumplido"
+  end
+end
+
 
 describe 'Tests de traits' do
 
   it 'Uso un trait en una clase y pruebo llamar a uno de sus metodos con parametros' do
 
-    class UnaClase
+    class A
       uses MiTrait
     end
 
-    objeto = UnaClase.new
+    objeto = A.new
 
     #el metodo2 tomando el paramatro...siempre devuelve 42
     objeto.metodo2(1000).should == 42
@@ -56,14 +65,14 @@ describe 'Tests de traits' do
   it 'Un trait queda definido como constante para las clases' do
 
     #una clase de prueba para ver si puedo usar los traits como constantes
-    class UnaClase
+    class B
       def trait
         MiTrait
       end
     end
 
     #instanciamos la UnaClase
-    prueba = UnaClase.new
+    prueba = B.new
 
     #el trait devuelto es el mismo
     prueba.trait.nombre.should == :MiTrait
@@ -79,7 +88,7 @@ describe 'Tests de traits' do
 
   it 'Puedo llamar uses desde una clase' do #ya se que es un test boludo, no me juzguen
 
-    class UnaClase
+    class C
       uses MiTrait
     end
 
@@ -88,11 +97,11 @@ describe 'Tests de traits' do
 
   it 'Llamamos a un metodo de un trait usado por una clase' do
 
-    class UnaClase
+    class D
       uses MiTrait
     end
 
-    objeto = UnaClase.new
+    objeto = D.new
 
     objeto.metodo1.should == "hola"
 
@@ -100,7 +109,7 @@ describe 'Tests de traits' do
 
   it 'Si defino un metodo en la clase y un trait tiene ese mismo metodo, el que cuenta es el de la clase' do
 
-    class UnaClase
+    class E
       uses MiTrait
 
       #el trait 'MiTrait' tambien define el 'metodo1' que devuelve "hola"
@@ -110,7 +119,7 @@ describe 'Tests de traits' do
 
     end
 
-    objeto = UnaClase.new
+    objeto = E.new
 
     objeto.metodo1.should == "metodo definido en la clase"
 
@@ -122,9 +131,10 @@ describe 'Tests de traits' do
 
   end
 
-  it 'Los metodos quedan definidos en un trait' do
+  it 'Los metodos quedan definidos en un trait de scope global' do
 
     #recordar que 'los metodos' son un diccionario clave valor
+    #y que estan definidos como constante en Object (con scope global)
     MiTrait.metodos.has_key?(:metodo1).should == true
     MiTrait.metodos.has_key?(:metodo2).should == true
 
@@ -134,7 +144,7 @@ describe 'Tests de traits' do
 
     expect{
 
-    class MiClase
+    class F
       uses #no le mando nada por parametro
     end
 
@@ -146,7 +156,7 @@ describe 'Tests de traits' do
 
     expect{
 
-      class UnaClase
+      class G
         uses MiTrait, TraitConMetodoRepetido
       end
 
@@ -157,14 +167,27 @@ describe 'Tests de traits' do
 
   it 'Metodo con otro metodo como requerimiento, pincha si no esta definido' do
 
-    class UnaClase
+    class H
       uses TraitConRequerimiento
     end
 
-    objeto = UnaClase.new
+    objeto = H.new
 
     #el 'name error' es una excepcion para cuando no esta definido un metodo
     expect{ objeto.metodoConRequerimiento }.to raise_error NameError
+
+  end
+
+  it 'Puedo llamar a "uses" con cualquier numero de traits traits' do
+
+    class Y
+      uses TraitConRequerimiento, TraitQueLlenaRequerimiento
+    end
+
+    objeto = Y.new
+
+    objeto.metodoConRequerimiento.should == "requerimiento cumplido"
+
 
   end
 
